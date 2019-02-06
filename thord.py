@@ -1,6 +1,6 @@
 from http import HTTPStatus
 from json import dumps
-from typing import Any, Union
+from typing import Any, Union, Callable
 from urllib.parse import parse_qs
 from wsgiref.headers import Headers as _Headers
 
@@ -69,13 +69,19 @@ class Response:
         await send({"type": "http.response.body", "body": self.content})
 
 
-def application(scope):
-    assert scope["type"] == "http"
+class API:
+    def __call__(self, scope) -> Callable:
+        """ Checkout scope, save it and return a handler coroutine. """
+        assert scope["type"] == "http"
+        self.scope = scope
+        return self.handle_request
 
-    async def asgi(receive, send):
-        req = Request(scope, receive)
-        name = req.args.get("name")
-        response = Response(f"Hello {name}!")
+    async def handle_request(self, receive, send) -> None:
+        req = Request(self.scope, receive)
+        response = self._view(req)
+        response = Response(response)
         await response(send)
 
-    return asgi
+    def add_view(self, view):
+        """ Takes in view and save it. """
+        self._view = view

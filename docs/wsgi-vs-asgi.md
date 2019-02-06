@@ -108,6 +108,12 @@ class Application:
         await send({"type": "http.response.body", ...})
 ```
 <!-- .element: class="fragment" -->
+
+```shell
+$ uvicorn thord:Application
+```
+<!-- .element: class="fragment" -->
+
 notes:
 The ASGI specification is an iterative but fundamental redesign, that provides an async server/application interface 
 with support for HTTP, HTTP/2, and WebSockets.

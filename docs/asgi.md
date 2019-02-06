@@ -134,4 +134,9 @@ def application(scope):
     return asgi
 ```
 <!-- .element: class="stretch" -->
+
+```shell
+$ uvicorn thord:application
+```
+<!-- .element: class="fragment" -->
 notes:

@@ -135,3 +135,41 @@ app = API()
 def hello(req):
     return f"Hello {req.args.get('name')}!"
 ```
+
+```shell
+$ uvicorn api:app
+```
+<!-- .element: class="fragment" -->
+
+
++++
+
+### Then <!-- .element: class="fragment" -->
+#### `How do we get there?` <!-- .element: class="fragment" -->
+
+```python
+class API:
+    def __call__(self, scope) -> Callable:
+        """ Checkout scope, save it and return a handler
+            coroutine. """
+        assert scope["type"] == "http"
+        self.scope = scope
+        return self.handle_request
+
+    async def handle_request(self, receive, send) -> None:
+        req = Request(self.scope, receive)
+        response = self._view(req)
+        response = Response(response)
+        await response(send)
+
+    def add_view(self, view):
+        """ Takes in view and save it. """
+        self._view = view
+```
+<!-- .element: class="fragment" -->
+notes:
+
+- Replace the func by a class
+- Make it a callable
+- return a coroutine
+- Create a decorator to save our view
