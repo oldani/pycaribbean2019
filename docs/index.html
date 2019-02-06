@@ -23,6 +23,7 @@
 			<section data-markdown='intro.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
 			<section data-markdown='wsgi-vs-asgi.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
 			<section data-markdown='asgi.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
+			<section data-markdown='request-response.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
 			<section>Slide 2</section>
 		</div>
 	</div>
@@ -35,12 +36,33 @@
 		// - https://github.com/hakimel/revealjs#configuration
 		// - https://github.com/hakimel/revealjs#dependencies
 		Reveal.initialize({
+			history: true,
 			dependencies: [
 				{ src: 'revealjs/plugin/markdown/marked.js' },
 				{ src: 'revealjs/plugin/markdown/markdown.js' },
 				{ src: 'revealjs/plugin/notes/notes.js', async: true },
 				{ src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
 			]
+		});
+
+		let ph, pv, jump;
+		Reveal.addEventListener('slidechanged', function (event) {
+			// event.previousSlide, event.currentSlide, event.indexh, event.indexv
+			if (jump) {
+				Reveal.slide(ph);
+				jump = false;
+			}
+			if (event.indexh == 7 && ph == 6 && pv == 1) {
+				Reveal.slide(6, 0);
+				jump = true;
+
+			} else if (event.indexh == 9 && ph == 8 && pv == 6) {
+				Reveal.slide(8, 1);
+				jump = true;
+			}
+
+			ph = event.indexh;
+			pv = event.indexv;
 		});
 	</script>
 </body>

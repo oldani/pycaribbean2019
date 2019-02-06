@@ -36,7 +36,7 @@ benefits that async brings to I/O programs.
 - Django <!-- .element: class="fragment" -->
 - Flask <!-- .element: class="fragment" -->
 notes:
-Sandly that’s easy said than done. That’s why we have more new web frameworks (Quart, Starlette, Sanic, Channels) .
+Sadly that’s easy said than done. That’s why we have more new web frameworks (Quart, Starlette, Sanic, Channels) .
 
 
 +++
@@ -119,7 +119,7 @@ This not only allows multiple incoming events and outgoing events for each appli
 Every event that you send or receive is a Python dict, with a predefined format. It’s these event formats that form the basis of the standard, and allow applications to be swappable between servers.
 
 ASGI is also designed to be a superset of `WSGI` so you can run `WSGI apps` inside `ASGI` servers.
-This need a translatin wrapper but no that hard.
+This need a translation wrapper but no that hard.
 
 The async syntax in the `__call__` method, which explicitly marks it as a possible point of task-switches, and allows other asynchronous code to be used within that execution context.
 The `receive and send` parameters, over which the messaging between the server and application takes place.

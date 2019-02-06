@@ -10,8 +10,18 @@
   margin-left: -1em;
 }
 
-.reveal pre code {
+.reveal pre code,
+.reveal pre.stretch code {
   max-height: 480px;
+}
+
+.reveal pre.stretch.stretch-plus code {
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.reveal pre.wider code {
+  width: 1000px;
 }
 
 .whoami .hljs.haml {
