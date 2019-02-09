@@ -1,8 +1,15 @@
+import re
+import inspect
+from functools import lru_cache
 from http import HTTPStatus
 from json import dumps
 from typing import Any, Union, Callable
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, urlparse
 from wsgiref.headers import Headers as _Headers
+
+
+class NotFound(Exception):
+    pass
 
 
 class Headers(_Headers):
@@ -31,11 +38,72 @@ class QueryArgs(dict):
             return default
 
 
+class URL:
+    def __init__(self, scope) -> None:
+        path: str = f"{scope['root_path']}{scope['path']}"
+        self._url: str = (
+            f"{scope['scheme']}://{scope['server'][0]}:{scope['server'][1]}"
+            f"{path}?{scope['query_string'].decode()}"
+        )
+        self.url = urlparse(self._url)
+
+    def __repr__(self) -> str:
+        return f"URL({self._url})"
+
+    def __eq__(self, value) -> bool:
+        return self._url == str(value)
+
+    def __getattr__(self, name: str) -> str:
+        return getattr(self.url, name)
+
+
 class Request:
     def __init__(self, scope, receive):
         self._scope = scope
         query_string = scope["query_string"].decode()
-        self.args = QueryArgs(query_string)
+        self.args: QueryArgs = QueryArgs(query_string)
+        self.url: URL = URL(scope)
+
+
+class Route:
+    _pattern = re.compile("{([^{}]*)}")
+
+    def __init__(self, route: str) -> None:
+        self.route = route
+        self.setup_route()
+
+    def __eq__(self, other):
+        if isinstance(other, self):
+            return self.route == other.route
+        else:
+            return self.match(other)
+
+    def __hash__(self):
+        return hash(self._regex)
+
+    def setup_route(self):
+        """ Create a regex for matching incoming routes.
+            _pattern is a rx for matching {fields} in views patterns.
+            _pattner.sub calls Route.replace_field in each match
+            and replace it for group capturing rx. 
+            /test/{id} will be compile to ^/test/(?P<id>[^/]+?)$   """
+        self._regex = re.compile(
+            f"^{self._pattern.sub(self.replace_field, self.route)}$"
+        )
+
+    @staticmethod
+    def replace_field(match):
+        return f"(?P<{match.group(1)}>[^/]+?)"
+
+    def match(self, _str: str):
+        """ March a path with this routes.
+            @return:
+                - dict {field: value} for routes with fields.
+                - True if matched but no field
+                - None for no matches. """
+        result = self._regex.match(_str)
+        if result:
+            return result.groupdict() or True
 
 
 class Response:
@@ -70,6 +138,9 @@ class Response:
 
 
 class API:
+    def __init__(self) -> None:
+        self._routes: dict = {}
+
     def __call__(self, scope) -> Callable:
         """ Checkout scope, save it and return a handler coroutine. """
         assert scope["type"] == "http"
@@ -78,10 +149,48 @@ class API:
 
     async def handle_request(self, receive, send) -> None:
         req = Request(self.scope, receive)
-        response = self._view(req)
-        response = Response(response)
+        try:
+            response = await self.dispatch(req)
+        except NotFound:
+            response = Response("Not found", status_code=404)
         await response(send)
 
-    def add_view(self, view):
+    def add_route(self, pattern: str, view: Callable) -> None:
+        """ Convert pattern to a Route obj, save it internally
+            and assign view. """
+        route = Route(pattern)
+        self._routes[route] = view
+
+    def route(self, pattern: str) -> Callable:
         """ Takes in view and save it. """
-        self._view = view
+
+        def warpper(view: Callable) -> Callable:
+            self.add_route(pattern, view)
+            return view
+
+        return warpper
+
+    @lru_cache(maxsize=256)  # If we already saw this path cache it
+    def get_view(self, path):
+        """ Retrieve view for a given path. """
+        _view, params = None, {}
+        for route, view in self._routes.items():
+            match = route.match(path)
+            if not match:
+                continue
+            if match and isinstance(match, dict):  # Means route have parameters
+                _view, params = view, match
+            else:
+                _view = view
+        return _view, params
+
+    async def dispatch(self, req):
+        """ Execute view for a given request. """
+        view, params = self.get_view(req.url.path)
+        if not view:
+            raise NotFound()
+        if inspect.iscoroutinefunction(view):
+            respose = await view(req, **params)
+        else:
+            respose = view(req, **params)
+        return Response(respose)
