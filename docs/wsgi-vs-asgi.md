@@ -10,7 +10,8 @@ async def say_hello(time=1):
 
 async def main():
     print(f"started at {time.strftime('%X')}")
-    tasks = [asyncio.ensure_future(say_hello(i)) for i in range(5)]
+    tasks = [asyncio.ensure_future(say_hello(i))
+             for i in range(5)]
     for t in tasks:
         await t
     print(f"finished at {time.strftime('%X')}")
@@ -18,6 +19,7 @@ async def main():
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 ```
+
 notes:
 If we’re going to build an async web framework we have to know about async/await
 

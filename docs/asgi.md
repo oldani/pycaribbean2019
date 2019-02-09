@@ -26,15 +26,14 @@ from thord import API
 
 app = API()
 
-@app.route('/hello/{name}')
-def hello(req, name: str) -> dict:
-    return {'hello': name}
+@app.route("/")
+def index(req) -> dict:
+    return {"hello": "Welcome to PyCaribbean"}
 
+async def user(req, idx: int) -> dict:
+    return {"id": idx, "name": "test"}
 
-def bye(name: str) -> dict:
-    return {name: 'Game over!'}
-
-app.add_route('/user/', methods=['post'])
+app.add_route("/user/{idx}", user)
 
 if __name__ == '__main__':
     app.run()

@@ -24,7 +24,8 @@
 			<section data-markdown='wsgi-vs-asgi.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
 			<section data-markdown='asgi.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
 			<section data-markdown='request-response.md' data-separator-vertical="^\r?\n\+\+\+r?\n$"></section>
-			<section>Slide 2</section>
+			<section data-markdown='routing.md' data-separator-vertical="^\r?\n\+\+\+r?\n$" data-background="#b5533c"></section>
+			<section data-markdown='where-next.md' data-separator-vertical="^\r?\n\+\+\+r?\n$" data-background-color="#4d7e65"></section>
 		</div>
 	</div>
 
@@ -52,14 +53,14 @@
 				Reveal.slide(ph);
 				jump = false;
 			}
-			if (event.indexh == 7 && ph == 6 && pv == 1) {
+			if (event.indexh == 7 && event.indexv == 0 && ph == 6 && pv == 1) {
 				Reveal.slide(6, 0);
 				jump = true;
 
 			} else if (event.indexh == 9 && ph == 8 && pv == 6) {
 				Reveal.slide(8, 1);
 				jump = true;
-			} else if (event.indexh == 10 && ph == 9 && pv == 1) {
+			} else if (event.indexh == 10 && event.indexv == 0 && ph == 9 && pv == 1) {
 				Reveal.slide(9, 0);
 				jump = true;
 			}
