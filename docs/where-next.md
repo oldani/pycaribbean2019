@@ -62,5 +62,12 @@ urlspatterns = [
 
 ---
 
-<!-- .slide: data-background-color="#e7ad52" -->
+
 ### Thanks you everyone!
+
+https://es.surveymonkey.com/r/ZPHP6WH
+
+
+---
+
+### Bonus? <!-- .element: class="fragment" -->

@@ -76,7 +76,8 @@ async def get_repo_issues(req, idx: int, label: str):
 <!-- .element: class="stretch stretch-plus" -->
 notes:
 A lot's stuff going on here for routing
-I want users to use simple patterns instead or regex
+I want users to use simple patterns instead or regex.
+
 *note* Even though we're specifying parameters types, we're not there yet
 
 
@@ -108,7 +109,9 @@ All routing system out there use regex under the hood:
 
 Inpect for been able to define async or normal functions for views
 this module help you a lot when for getting info about user code
+
 lru_cache for saving some computing resouces
+
 urlparse for parsing urls
 
 
@@ -126,7 +129,8 @@ class URL:
     def __init__(self, scope) -> None:
         path: str = f"{scope['root_path']}{scope['path']}"
         self._url: str = (
-            f"{scope['scheme']}://{scope['server'][0]}:{scope['server'][1]}"
+            f"{scope['scheme']}://{scope['server'][0]}:\
+                {scope['server'][1]}"
             f"{path}?{scope['query_string'].decode()}"
         )
         self.url = urlparse(self._url)
@@ -179,12 +183,14 @@ notes:
 
 Add self._routes. It's a dict
 We ensure no repeated patterns matching different views
+
 Our keys would be the route obj (which must be hashble)
 and our values will be our views.
 
 Then if patterns are no equal to paths we will need to iterate over our
 dict, the why not just a list of tuples. Also BigO notation.
 More on this latter
+
 
 our @route decorator, how does decorators works?
 
@@ -216,13 +222,16 @@ class Route:
 
                       "/repo/{idx}/issues/{label}" 
                                   == 
-                  "^/repo/(?P<id>[^/]+?)/(?P<label>[^/]+?)$
+            "^/repo/(?P<id>[^/]+?)/issues/(?P<label>[^/]+?)$
 <!-- .element: class="fragment" -->
 
 notes:
 setup_route: Create a regex for matching incoming routes.
+
 _pattern is a rx for matching {fields} in views patterns.
+
 _pattner.sub calls Route.replace_field in each match
+
 and replace it for group capturing rx. 
 /test/{id} will be compile to ^/test/(?P<id>[^/]+?)$
 
@@ -286,6 +295,7 @@ def get_view(self, path):
             _view, params = view, match
         else:
             _view = view
+        break
     return _view, params
 ```
 <!-- .element: class="fragment fade-in-then-out" -->

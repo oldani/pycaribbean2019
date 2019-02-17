@@ -45,29 +45,6 @@
 				{ src: 'revealjs/plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
 			]
 		});
-
-		let ph, pv, jump;
-		Reveal.addEventListener('slidechanged', function (event) {
-			// event.previousSlide, event.currentSlide, event.indexh, event.indexv
-			if (jump) {
-				Reveal.slide(ph);
-				jump = false;
-			}
-			if (event.indexh == 7 && event.indexv == 0 && ph == 6 && pv == 1) {
-				Reveal.slide(6, 0);
-				jump = true;
-
-			} else if (event.indexh == 9 && ph == 8 && pv == 6) {
-				Reveal.slide(8, 1);
-				jump = true;
-			} else if (event.indexh == 10 && event.indexv == 0 && ph == 9 && pv == 1) {
-				Reveal.slide(9, 0);
-				jump = true;
-			}
-
-			ph = event.indexh;
-			pv = event.indexv;
-		});
 	</script>
 </body>
 

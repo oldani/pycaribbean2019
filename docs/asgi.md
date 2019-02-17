@@ -19,27 +19,6 @@ bringing ASGI support to the frameworks.
 ## Let's build an `ASGI` web framework
 
 
-+++
-
-```python
-from thord import API
-
-app = API()
-
-@app.route("/")
-def index(req) -> dict:
-    return {"hello": "Welcome to PyCaribbean"}
-
-async def user(req, idx: int) -> dict:
-    return {"id": idx, "name": "test"}
-
-app.add_route("/user/{idx}", user)
-
-if __name__ == '__main__':
-    app.run()
-```
-
-
 ---
 
 ### Hello PyCaribbean!

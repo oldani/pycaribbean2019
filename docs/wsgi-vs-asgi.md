@@ -1,4 +1,4 @@
-#### Async/Await
+#### Async / Await <!-- .element: class="fragment" -->
 
 ```python
 import asyncio
@@ -10,27 +10,40 @@ async def say_hello(time=1):
 
 async def main():
     print(f"started at {time.strftime('%X')}")
-    tasks = [asyncio.ensure_future(say_hello(i))
-             for i in range(5)]
-    for t in tasks:
-        await t
+    tasks = [say_hello(i) for i in range(1, 6)]
+    await asyncio.gather(*tasks)
     print(f"finished at {time.strftime('%X')}")
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 ```
+<!-- .element: class="fragment" -->
 
 notes:
 If we’re going to build an async web framework we have to know about async/await
 
-So async/await on Python 3.6 brings a  new landscape for asynchronous programming models
+AsyncIO brings cooperative multitasking.
 
-Asynchronous models uses a task base switching, with explicit switch points and flow control managed within the
-runtime. In contrast to thread-bases concurrency, which is more resource intensive and relies on implicit switching,
-managed by the OS.
+Asyncio added on `python 3.4`
 
-One of our challenges is how we adapt all the web frameworks that we already have to take advantage of all the
-benefits that async brings to I/O programs.
+`@asyncio.coroutine` & `yield from`
+
+On `Python 3.5` `async / await` were added. This brings a new world of development. Still provisional API
+
+`Python 3.6` async generators. No longer provisional
+
+What do we mean by cooperative multitasking?
+But be careful for blocking code?
+
++++
+
+<!-- .slide: data-background-color="#fff" -->
+![](https://files.realpython.com/media/Asyncio.31182d3731cf.png)
+
+notes:
+So we can take advantage of this and make our frameworks faster.
+
+One of our challenges is how we adapt all the web frameworks that we already have to take advantage of all the benefits that async brings to I/O programs.
 
 
 +++

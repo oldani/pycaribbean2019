@@ -182,6 +182,7 @@ class API:
                 _view, params = view, match
             else:
                 _view = view
+            break
         return _view, params
 
     async def dispatch(self, req):
